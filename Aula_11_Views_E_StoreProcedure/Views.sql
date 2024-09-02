@@ -1,12 +1,8 @@
-USE [Northwind-pr]
-
 -- Cria a visão
-CREATE VIEW vwItensComprados AS
-
+CREATE VIEW vwItensComprados AS 
 SELECT C.CODIGODOCLIENTE,
 	CAT.Descricao,
-	DP.Quantidade,
-	COUNT (*) AS QTD 
+	DP.Quantidade
 FROM CLIENTES AS C
 INNER JOIN Pedidos AS P 
 	ON P.CodigoDoCliente = C.CodigoDoCliente
@@ -27,8 +23,7 @@ ALTER VIEW vwItensComprados AS
 SELECT C.CODIGODOCLIENTE,
 	CAT.Descricao,
 	DP.Quantidade,
-	F.Pais,
-	COUNT (*) AS QTD 
+	F.Pais
 FROM CLIENTES AS C
 INNER JOIN Pedidos AS P 
 	ON P.CodigoDoCliente = C.CodigoDoCliente
@@ -42,26 +37,22 @@ INNER JOIN CATEGORIAS AS CAT
 	ON CAT.CodigoDaCategoria = PR.CodigoDaCategoria
 GROUP BY C.CodigoDoCliente, Cat.Descricao, DP.Quantidade, F.Pais
 
--- Ao invés de usar o 'Where' num script gigante, você pode fazer isso com o auxílio da View.
--- CORRIGIR, VER AULA GRAVADA (AULA 13). - 08/11.
 SELECT * FROM vwItensComprados
-WHERE F.PAIS= 'SUÉCIA' 
-	AND  CAT.Descricao = 'Peixes e algas marinhas'
-	AND DP.Quantidade between 20 and 36
-GROUP BY Cat.Descricao, DP.Quantidade, F.PAIS
 
--- consultando a view em forma de script. CTRL + T vai para texto, CTRL + D volta para tabelas.
+-- Ao invés de usar o 'Where' num script gigante, você pode fazer isso com o auxílio da View.
+SELECT * FROM vwItensComprados
+WHERE PAIS = 'SUÉCIA' 
+	AND  Descricao = 'Peixes e algas marinhas'
+	AND Quantidade between 20 and 36
+
+-- Consultando a view em forma de script. CTRL + T vai para texto, CTRL + D volta para tabelas.
 SP_HELPTEXT vwItensComprados
 
 -- Excluindo view
 DROP VIEW vwItensComprados
 
 -- Criação de tabela temporária
-SELECT C.CODIGODOCLIENTE,
-	CAT.Descricao,
-	P.CodigoDoFuncionario,
-	P.Via,
-	DP.Quantidade
+SELECT C.CODIGODOCLIENTE, CAT.Descricao, P.CodigoDoFuncionario, P.Via, DP.Quantidade
 INTO #TMP --criando tabela temporária
 FROM CLIENTES AS C
 INNER JOIN Pedidos AS P 
@@ -76,7 +67,7 @@ INNER JOIN CATEGORIAS AS CAT
 	ON CAT.CodigoDaCategoria = PR.CodigoDaCategoria
 
 -- Inner Join com a tabela temporária
-select * from #tmp AS T
+SELECT * FROM #tmp AS T
 INNER JOIN Transportadoras AS TR
 	ON TR.CodigoDaTransportadora = T.VIA
 INNER JOIN FUNCIONARIOS AS F
